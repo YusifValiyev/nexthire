@@ -44,32 +44,32 @@
 
     @variant xs {
         max-width: 100%; /* 345px */
-        padding-inline: 6rem;
+        padding-inline: 1rem;
     }
 
     @variant sm {
         max-width: 100%; /* 640px */
-        padding-inline: 6rem;
+        padding-inline: 1rem;
     }
 
     @variant md {
         max-width: 100%; /* 768px */
-        padding-inline: 6rem;
+        padding-inline: 2rem;
     }
 
     @variant lg {
         max-width: 100%; /* 1024px */
-        padding-inline: 6rem;
+        padding-inline: 3rem;
     }
 
     @variant xl {
         max-width: 100%; /* 1280px */
-        padding-inline: 6rem;
+        padding-inline: 4rem;
     }
 
     @variant 2xl {
         max-width: 100%; /* 1536px */
-        padding-inline: 6rem;
+        padding-inline: 5rem;
     }
 
     @variant 3xl {
