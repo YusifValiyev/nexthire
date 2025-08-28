@@ -10,14 +10,14 @@ import Footer from "./components/layout/Footer";
 function App() {
     return (
         <>
-            {/* <Navbar />
+            <Navbar />
             <DiscoverSection />
             <SkillSection />
             <HiringSection />
             <EmpowerSection />
-            <TextSection /> */}
+            <TextSection />
             <CareerSection />
-            {/* <Footer /> */}
+            <Footer />
         </>
     );
 }
