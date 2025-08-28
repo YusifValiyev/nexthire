@@ -16,10 +16,10 @@ export default function HiringSection() {
         <section className="pt-[60px] xl:pt-[140px] 3xl:pt-[190px]">
             <Container className="flex flex-col lg:flex-row justify-between gap-y-8 items-center">
                 <div className="flex flex-col justify-between gap-y-4 md:gap-y-8 w-full md:w-[70ch]">
-                    <h2 className="text-base w-[227px] md:w-full xl:text-4xl 3xl:text-6xl font-medium leading-normal md:leading-16">
+                    <h2 className="text-base w-[227px] md:w-full  md:text-2xl xl:text-4xl 3xl:text-6xl font-medium leading-normal md:leading-16">
                         Reimagining Talent Rethinking Hiring
                     </h2>
-                    <p className="text-text text-[16px] xl:text-base 3xl:text-big-lg">
+                    <p className="text-text text-[16px] md:text-base xl:text-base 3xl:text-big-lg">
                         We don’t just test skills—we reveal potential.
                     </p>
                 </div>
