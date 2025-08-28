@@ -29,9 +29,9 @@ export default function Navbar() {
           className="w-[67px] xl:w-[100px] 3xl:w-[151px] h-[52px]"
         />
         <ul className="hidden md:flex gap-x-[72px] xl:text-[16px] 3xl:text-sm">
-          <li>About us</li>
-          <li>Features</li>
-          <li>Contact</li>
+          <li className="cursor-pointer">About us</li>
+          <li className="cursor-pointer">Features</li>
+          <li className="cursor-pointer">Contact</li>
         </ul>
         <div className="flex items-center gap-x-6">
           <button className="bg-transparent border-0 text-white xl:text-[16px] 3xl:text-sm">
