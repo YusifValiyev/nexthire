@@ -1,0 +1,34 @@
+import Container from "@components/layout/Container";
+import SkillCard from "./ui/SkillCard";
+import GroupIcon from "@/assets/icons/Group.svg";
+import JobIcon from "@/assets/icons/Job.svg";
+import GraphIcon from "@/assets/icons/Graph.svg";
+
+export default function SkillSection() {
+    return (
+        <section className="pt-[60px] md:pt-[190px]">
+            <Container>
+                <h2 className="w-[247px] md:w-[773px] text-[24px] md:text-6xl font-semibold text-black">
+                    Turning Your Skills into Career Moves
+                </h2>
+                <div className="flex flex-wrap xl:flex-nowrap justify-center flex-col md:flex-row items-center gap-x-[70px] gap-y-4 mt-8 md:mt-[80px]">
+                    <SkillCard
+                        variant="primary"
+                        icon={GroupIcon}
+                        text="Take Skill-Based Assessments"
+                    />
+                    <SkillCard
+                        variant="secondary"
+                        icon={GraphIcon}
+                        text="Take Skill-Based Assessments"
+                    />
+                    <SkillCard
+                        variant="secondary"
+                        icon={JobIcon}
+                        text="Take Skill-Based Assessments"
+                    />
+                </div>
+            </Container>
+        </section>
+    );
+}
