@@ -19,22 +19,22 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 py-[20px] md:py-[50px] transition-colors duration-300
+      className={`fixed top-0 left-0 w-full z-50 py-[20px] lg:py-[25px] 2xl:py-[30px] 3xl:py-[50px] transition-colors duration-300
       ${scrolled ? "bg-[url('@/assets/images/Rectangle.png')] bg-cover bg-center" : "bg-transparent"}`}
     >
       <Container className="flex items-center justify-between text-white">
         <img
           src={Logo}
           alt="NextHire Logo"
-          className="w-[67px] md:w-[151px] h-[52px]"
+          className="w-[67px] xl:w-[100px] 3xl:w-[151px] h-[52px]"
         />
-        <ul className="hidden md:flex gap-x-[72px] text-sm">
+        <ul className="hidden md:flex gap-x-[72px] xl:text-[16px] 3xl:text-sm">
           <li>About us</li>
           <li>Features</li>
           <li>Contact</li>
         </ul>
         <div className="flex items-center gap-x-6">
-          <button className="bg-transparent border-0 text-white text-sm">
+          <button className="bg-transparent border-0 text-white xl:text-[16px] 3xl:text-sm">
             Sign up
           </button>
           <button className="block md:hidden">

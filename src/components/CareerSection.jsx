@@ -5,9 +5,9 @@ import CareerCard from "./ui/CareerCard";
 
 export default function CareerSection() {
     return (
-        <section className="pt-[60px] md:pt-[190px]">
+        <section className="pt-[60px] xl:pt-[140px] 3xl:pt-[190px]">
             <Container>
-                <h2 className="text-left md:text-center text-base md:text-6xl font-semibold text-black">
+                <h2 className="text-left md:text-center text-[24px] xl:text-4xl 3xl:text-6xl  font-semibold text-black">
                     Career Journeys Powered by NextHire
                 </h2>
                 <div className="flex flex-col xl:flex-row gap-y-12 items-center gap-x-[70px] mt-[80px]">

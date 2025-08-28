@@ -28,10 +28,10 @@ export default function CareerCard({
                     {subText}
                 </p>
             </div>
-            <div className="flex flex-col-reverse md:flex-row items-center gap-x-[12px] overflow-hidden">
-                <img src={icon} alt="skill_image" className="self-start -ml-15" />
+            <div className="flex flex-col-reverse md:flex-row items-center gap-x-[12px] overflow-hidden rounded-[40px] md:rounded-[80px]">
+                <img src={icon} alt="skill_image" className="self-start -ml-15 object-contain" />
                 <p
-                    className={`text-[20px] px-8 md:px-0 md:text-[22px] md:w-[348px]${
+                    className={`text-[16px] px-8 md:px-1 xl:text-[20px] 3xl:text-[22px] md:w-[348px]${
                         variant === "primary"
                             ? "text-[#C3C3C3]"
                             : "text-[#3C3C3C]"

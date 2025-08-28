@@ -7,7 +7,7 @@ import LinkedIn from "@/assets/icons/svg-ln.svg";
 
 export default function Footer() {
     return (
-        <footer className="mt-[60px] md:mt-[190px] py-[71px] md:py-[117px] px-8 md:px-[104px] mx-2 md:mx-[35px] rounded-4xl bg-[url(@/assets/images/Rectangle.png)] bg-no-repeat bg-cover">
+        <footer className="mt-[60px] my-[20px] xl:mt-[140px] 3xl:mt-[190px] py-[71px] md:py-[117px] px-8 md:px-[104px] mx-2 md:mx-[35px] rounded-4xl bg-[url(@/assets/images/Rectangle.png)] bg-no-repeat bg-cover">
             <div className="flex flex-col items-center">
                 <div className="flex flex-col items-center">
                     <img src={Logo} className="w-[150px]" alt="Logo" />
@@ -29,55 +29,55 @@ export default function Footer() {
                 <div className="flex flex-col lg:flex-row items-start md:justify-between lg:items-end w-full mt-[50px] md:mt-[158px] gap-y-[46px]">
                     <div class="flex flex-col justify-between lg:justify-start md:flex-row w-full lg:gap-x-[50px] xl:gap-x-[110px] 2xl:gap-x-[170px] gap-y-[46px]">
                         <ul className="flex flex-col gap-y-[24px]">
-                            <h4 className="text-white font-semibold text-[24px]">
+                            <h4 className="text-white font-semibold text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 Quick Links
                             </h4>
-                            <li className="text-[#A3A3A3] text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Home</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Features</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Pricing</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Contact</a>
                             </li>
                         </ul>
 
                         <ul className="flex flex-col gap-y-[24px]">
-                            <h4 className="text-white font-semibold text-[20px] lg:text-[24px]">
+                            <h4 className="text-white font-semibold text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 Explore NextHire
                             </h4>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Home</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Features</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Plans</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Careers</a>
                             </li>
                         </ul>
 
                         <ul className="flex flex-col gap-y-[24px]">
-                            <h4 className="text-white font-semibold text-[20px] lg:text-[24px]">
+                            <h4 className="text-white font-semibold text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 Support
                             </h4>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Help Center</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Contact Support</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Community</a>
                             </li>
-                            <li className="text-[#A3A3A3] text-[20px] lg:text-[24px]">
+                            <li className="text-[#A3A3A3] text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 <a href="#">Updates</a>
                             </li>
                         </ul>

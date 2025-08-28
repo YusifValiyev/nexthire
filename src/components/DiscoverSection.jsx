@@ -7,10 +7,10 @@ export default function DiscoverSection() {
             <Container>
                 <div className="flex flex-col items-center gap-y-[32px] md:gap-y-[72px]">
                     <div className="flex flex-col items-center gap-y-4 md:gap-y-[42px]">
-                        <h2 className="text-white text-lg md:text-max-large max-w-full md:max-w-[70%] text-center font-semibold">
+                        <h2 className="text-white text-lg md:text-4xl xl:text-6xl 3xl:text-max-large max-w-full md:max-w-[70%] text-center font-semibold">
                             Go Beyond Grades Discover Real Talent
                         </h2>
-                        <h4 className="text-[#ECECEC] text-[16px] md:text-3xl font-normal">
+                        <h4 className="text-[#ECECEC] text-[16px] md:text-base xl:text-big-lg  3xl:text-3xl font-normal">
                             Assessing skills, unlocking opportunities
                         </h4>
                     </div>
@@ -19,13 +19,11 @@ export default function DiscoverSection() {
                             variant="contained"
                             text="Get started"
                             type="button"
-                            className="text-[16px] md:text-base"
                         />
                         <Button
                             variant="outlined"
                             text="How it works"
                             type="button"
-                            className="text-[16px] md:text-base"
                         />
                     </div>
                 </div>

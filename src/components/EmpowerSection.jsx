@@ -6,9 +6,9 @@ import EmpowerCard from "./ui/EmpowerCard";
 
 export default function EmpowerSection() {
     return (
-        <section className="pt-[60px] md:pt-[190px]">
+        <section className="pt-[60px] xl:pt-[140px] 3xl:pt-[190px]">
             <Container>
-                <h2 className="text-left md:text-center text-base md:text-6xl font-semibold text-black">
+                <h2 className="text-left md:text-center text-base xl:text-4xl 3xl:text-6xl font-semibold text-black">
                     Who We Empower
                 </h2>
                 <div className="flex flex-col md:flex-row flex-wrap 2xl:flex-nowrap justify-center  items-center gap-x-[70px] mt-8 md:mt-[80px] gap-y-4">
