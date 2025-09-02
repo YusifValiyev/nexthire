@@ -6,6 +6,7 @@ import EmpowerSection from "./components/EmpowerSection";
 import TextSection from "./components/TextSection";
 import CareerSection from "./components/CareerSection";
 import Footer from "./components/layout/Footer";
+import Vapi from "./components/voice/Vapi";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
             <TextSection />
             <CareerSection />
             <Footer />
+            <Vapi/>
         </>
     );
 }

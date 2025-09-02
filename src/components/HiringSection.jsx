@@ -5,6 +5,7 @@ export default function HiringSection() {
     const renderList = (textList) => {
         return textList.map((text, index) => (
             <div
+                key={index}
                 className={`p-[24px_24px_24px_32px] md:p-[30px_30px_30px_59px] w-[100%] text-white rounded-[16px] md:rounded-[28px] text-[16px] lg:text-sm 3xl:text-lg ${linearGradient}`}
             >
                 {text}

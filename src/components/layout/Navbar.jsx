@@ -5,7 +5,7 @@ import Menu from "@/assets/icons/Menu.svg";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -17,12 +17,12 @@ export default function Navbar() {
     }, []);
 
     useEffect(() => {
-        if (isSidebarOpen) {
+        if (isOpen) {
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "";
         }
-    }, [isSidebarOpen]);
+    }, [isOpen]);
 
     return (
         <>
@@ -52,7 +52,7 @@ export default function Navbar() {
                         </button>
                         <button
                             className="block md:hidden"
-                            onClick={() => setIsSidebarOpen(true)}
+                            onClick={() => setIsOpen(true)}
                         >
                             <img src={Menu} alt="Menu" />
                         </button>
@@ -63,7 +63,7 @@ export default function Navbar() {
             {/* Sidebar */}
             <div
                 className={`fixed top-0 right-0 w-full h-full z-50 transform transition-transform duration-300
-                ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}
+                ${isOpen ? "translate-x-0" : "translate-x-full"}
                 bg-[url('@/assets/images/Rectangle.png')] bg-cover bg-center
                 text-white flex flex-col`}
             >
@@ -75,7 +75,7 @@ export default function Navbar() {
                         className="w-[67px] xl:w-[100px] h-[52px]"
                     />
                     <button
-                        onClick={() => setIsSidebarOpen(false)}
+                        onClick={() => setIsOpen(false)}
                         aria-label="Close menu"
                     >
                         <svg
@@ -99,19 +99,19 @@ export default function Navbar() {
                 <ul className="flex flex-col items-center justify-center gap-y-8 text-lg flex-1">
                     <li
                         className="cursor-pointer"
-                        onClick={() => setIsSidebarOpen(false)}
+                        onClick={() => setIsOpen(false)}
                     >
                         About us
                     </li>
                     <li
                         className="cursor-pointer"
-                        onClick={() => setIsSidebarOpen(false)}
+                        onClick={() => setIsOpen(false)}
                     >
                         Features
                     </li>
                     <li
                         className="cursor-pointer"
-                        onClick={() => setIsSidebarOpen(false)}
+                        onClick={() => setIsOpen(false)}
                     >
                         Contact
                     </li>

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.12",
+    "@vapi-ai/client-sdk-react": "^0.0.12",
+    "@vapi-ai/web": "^2.3.10",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.12"

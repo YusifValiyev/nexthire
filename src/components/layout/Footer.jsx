@@ -27,7 +27,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="flex flex-col lg:flex-row items-start md:justify-between lg:items-end w-full mt-[50px] md:mt-[158px] gap-y-[46px]">
-                    <div class="flex flex-col justify-between lg:justify-start md:flex-row w-full lg:gap-x-[50px] xl:gap-x-[110px] 2xl:gap-x-[170px] gap-y-[46px]">
+                    <div className="flex flex-col justify-between lg:justify-start md:flex-row w-full lg:gap-x-[50px] xl:gap-x-[110px] 2xl:gap-x-[170px] gap-y-[46px]">
                         <ul className="flex flex-col gap-y-[24px]">
                             <h4 className="text-white font-semibold text-[16px] xl:text-[20px] 3xl:text-[24px]">
                                 Quick Links
