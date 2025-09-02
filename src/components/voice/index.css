@@ -1,0 +1,71 @@
+.vapi-widget-wrapper button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    column-gap: 10px;
+    cursor: pointer;
+}
+
+.vapi-widget-wrapper > div:first-child > div:first-child > div:first-child {
+    padding: 10px 20px;
+}
+
+.vapi-widget-wrapper
+    > div:first-child
+    > div:first-child
+    > div:first-child
+    > div:first-child {
+    column-gap: 20px;
+}
+
+.vapi-widget-wrapper
+    > div:first-child
+    > div:first-child
+    > div:first-child
+    > div:last-child {
+    column-gap: 10px;
+}
+.vapi-widget-wrapper
+    > div:first-child
+    > div:first-child
+    > div:first-child
+    > div:last-child
+    button {
+    padding: 0;
+}
+
+.vapi-widget-wrapper .vapi-conversation-area {
+    padding: 10px 20px;
+    scrollbar-width: none;
+}
+
+.vapi-widget-wrapper .vapi-conversation-area > div:first-child {
+    display: none;
+}
+.vapi-widget-wrapper .vapi-conversation-area > div:nth-child(odd) {
+    justify-content: flex-start; /* solda */
+}
+
+.vapi-widget-wrapper .vapi-conversation-area > div:nth-child(odd) > div {
+    background-color: rgba(143, 143, 143, 0.581);
+}
+
+/* Cüt sıradakı div-lər (2, 4, 6...) */
+.vapi-widget-wrapper .vapi-conversation-area > div:nth-child(even) {
+    justify-content: flex-end;
+}
+.vapi-widget-wrapper .vapi-conversation-area > div > div {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.vapi-widget-wrapper .vapi-conversation-area + div > div {
+    column-gap: 10px;
+    align-items: stretch;
+}
+.vapi-widget-wrapper .vapi-conversation-area + div > div > input {
+    border: none;
+    outline: none;
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    padding: 0px 10px;
+}
