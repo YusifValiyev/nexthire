@@ -305,3 +305,19 @@
 .justify-start {
     justify-content: start;
 }
+
+.h-12 {
+    height: 3rem !important;
+}
+
+.w-12 {
+    width: 3rem !important;
+}
+
+.rounded-full {
+    border-radius: 9999px !important;
+}
+
+.flex-1 {
+    flex: 1 1 0% !important;
+}
