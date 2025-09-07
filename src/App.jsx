@@ -7,6 +7,7 @@ import TextSection from "./components/TextSection";
 import CareerSection from "./components/CareerSection";
 import Footer from "./components/layout/Footer";
 import Vapi from "./components/voice/Vapi";
+import { ToastContainer } from "react-toastify";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
             <CareerSection />
             <Footer />
             <Vapi/>
+            <ToastContainer/>
         </>
     );
 }

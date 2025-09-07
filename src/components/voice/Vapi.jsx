@@ -3,6 +3,7 @@ import { VapiWidget } from "@vapi-ai/client-sdk-react";
 import "./index.css";
 import { useNavigate } from "react-router";
 import Loading from "../layout/Loading";
+import { toast } from "react-toastify";
 
 export default function Vapi() {
     const [cvData, setCvData] = useState(null);
@@ -19,31 +20,29 @@ export default function Vapi() {
             try {
                 const data = JSON.parse(event.data);
 
-
-
                 if (data.type === "cv-generated") {
                     setCvGenerated(data.content);
-                    console.log(data.content)
+                    console.log(data.content);
+                    toast.success("CV generated successfully");
                     navigate("/cv-preview", {
                         state: { cvData: data.content },
                     });
                     setLoading(false);
                 }
 
-                if (data.type === "error") {
-                    alert(data.message || "An error occurred");
+                if (data.type === "error" && data.errorType === "user-error") {
+                    toast.error(data.message);
                     setLoading(false);
                 }
             } catch (err) {
                 console.error("Error parsing SSE data:", err);
-                alert("Error parsing server response");
+                toast.error("Something went wrong");
                 setLoading(false);
             }
         };
 
         evtSource.onerror = (err) => {
             console.error("SSE error:", err);
-            alert("SSE connection error");
             evtSource.close();
             setLoading(false);
         };
