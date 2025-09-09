@@ -27,77 +27,90 @@ export default function CVPreview() {
     }
 
     const handleInputChange = (field, value) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
-            [field]: value
+            [field]: value,
         }));
     };
 
     const handleArrayChange = (arrayName, index, value) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
-            [arrayName]: prev[arrayName].map((item, i) => i === index ? value : item)
+            [arrayName]: prev[arrayName].map((item, i) =>
+                i === index ? value : item
+            ),
         }));
     };
 
     const handleObjectArrayChange = (arrayName, index, field, value) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
             [arrayName]: prev[arrayName].map((item, i) =>
                 i === index ? { ...item, [field]: value } : item
-            )
+            ),
         }));
     };
 
     const handleResponsibilityChange = (expIndex, respIndex, value) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
             work_experience: prev.work_experience.map((exp, i) =>
-                i === expIndex ? {
-                    ...exp,
-                    responsibilities: exp.responsibilities.map((resp, j) =>
-                        j === respIndex ? value : resp
-                    )
-                } : exp
-            )
+                i === expIndex
+                    ? {
+                          ...exp,
+                          responsibilities: exp.responsibilities.map(
+                              (resp, j) => (j === respIndex ? value : resp)
+                          ),
+                      }
+                    : exp
+            ),
         }));
     };
 
     const addResponsibility = (expIndex) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
             work_experience: prev.work_experience.map((exp, i) =>
-                i === expIndex ? {
-                    ...exp,
-                    responsibilities: [...exp.responsibilities, "New responsibility"]
-                } : exp
-            )
+                i === expIndex
+                    ? {
+                          ...exp,
+                          responsibilities: [
+                              ...exp.responsibilities,
+                              "New responsibility",
+                          ],
+                      }
+                    : exp
+            ),
         }));
     };
 
     const removeResponsibility = (expIndex, respIndex) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
             work_experience: prev.work_experience.map((exp, i) =>
-                i === expIndex ? {
-                    ...exp,
-                    responsibilities: exp.responsibilities.filter((_, j) => j !== respIndex)
-                } : exp
-            )
+                i === expIndex
+                    ? {
+                          ...exp,
+                          responsibilities: exp.responsibilities.filter(
+                              (_, j) => j !== respIndex
+                          ),
+                      }
+                    : exp
+            ),
         }));
     };
 
     const addSkill = (skillType) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
-            [skillType]: [...prev[skillType], "New skill"]
+            [skillType]: [...prev[skillType], "New skill"],
         }));
     };
 
     const removeSkill = (skillType, index) => {
-        setCvData(prev => ({
+        setCvData((prev) => ({
             ...prev,
-            [skillType]: prev[skillType].filter((_, i) => i !== index)
+            [skillType]: prev[skillType].filter((_, i) => i !== index),
         }));
     };
 
@@ -126,7 +139,7 @@ export default function CVPreview() {
             .cv-container {
               max-width: 800px;
               margin: 0 auto;
-              padding: 40px;
+              padding: 40px 20px;
               background: white;
             }
 
@@ -138,7 +151,7 @@ export default function CVPreview() {
             }
 
             .name {
-              font-size: 32px;
+              font-size: 28px;
               font-weight: bold;
               color: #a282ff;
               margin-bottom: 10px;
@@ -149,7 +162,7 @@ export default function CVPreview() {
             }
 
             .section-title {
-              font-size: 20px;
+              font-size: 18px;
               font-weight: bold;
               color: #a282ff;
               margin-bottom: 15px;
@@ -171,7 +184,7 @@ export default function CVPreview() {
             }
 
             .job-title {
-              font-size: 18px;
+              font-size: 16px;
               font-weight: bold;
               color: #a282ff;
             }
@@ -209,25 +222,26 @@ export default function CVPreview() {
             }
 
             .skills-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-              gap: 10px;
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
               margin-top: 10px;
             }
 
             .skill-item {
               background: #f3f0ff;
               color: #a282ff;
-              padding: 8px 12px;
+              padding: 6px 12px;
               border-radius: 20px;
               text-align: center;
-              font-size: 14px;
+              font-size: 13px;
               border: 1px solid #d8c8ff;
+              flex: 0 0 auto;
             }
 
             .interests-list {
               display: flex;
-              gap: 15px;
+              gap: 8px;
               flex-wrap: wrap;
             }
 
@@ -236,7 +250,7 @@ export default function CVPreview() {
               color: #8b5cff;
               padding: 6px 12px;
               border-radius: 15px;
-              font-size: 14px;
+              font-size: 13px;
               border: 1px solid #d8c8ff;
             }
 
@@ -244,6 +258,14 @@ export default function CVPreview() {
               .cv-container {
                 padding: 20px;
                 box-shadow: none;
+              }
+
+              .name {
+                font-size: 24px;
+              }
+
+              .section-title {
+                font-size: 16px;
               }
             }
           </style>
@@ -342,7 +364,7 @@ export default function CVPreview() {
 
     if (!cvData) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
                 <div className="text-center">
                     <p className="text-gray-600 mb-4">No CV data found.</p>
                     <button
@@ -357,27 +379,31 @@ export default function CVPreview() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-4xl mx-auto px-6 mb-6">
-                <div className="flex justify-between items-center">
+        <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+            {/* Header with responsive button layout */}
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-4 sm:mb-6">
+                <div className="flex w-full flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
                     <button
                         onClick={handleBack}
-                        className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                        className="px-4 sm:px-6 w-full sm:w-fit! py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
+                        style={{ backgroundColor: "#a282ff" }}
                     >
                         Back
                     </button>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col justify-end sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                         <button
                             onClick={() => setIsEditing(!isEditing)}
-                            className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium"
-                            style={{ backgroundColor: isEditing ? '#666' : '#a282ff' }}
+                            className="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
+                            style={{
+                                backgroundColor: isEditing ? "#666" : "#a282ff",
+                            }}
                         >
-                            {isEditing ? 'View Mode' : 'Edit Mode'}
+                            {isEditing ? "View Mode" : "Edit Mode"}
                         </button>
                         <button
                             onClick={handleDownloadPDF}
-                            className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium"
-                            style={{ backgroundColor: '#a282ff' }}
+                            className="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
+                            style={{ backgroundColor: "#a282ff" }}
                         >
                             Download PDF
                         </button>
@@ -385,117 +411,186 @@ export default function CVPreview() {
                 </div>
             </div>
 
+            {/* CV Content */}
             <div
                 id="cv-content"
-                className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden"
+                className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mx-4 sm:mx-auto"
             >
-                <div className="p-8">
-                    <div className="text-center mb-8 pb-6" style={{ borderBottom: '2px solid #a282ff' }}>
+                <div className="p-4 sm:p-6 lg:p-8">
+                    {/* Header */}
+                    <div
+                        className="text-center mb-6 sm:mb-8 pb-4 sm:pb-6"
+                        style={{ borderBottom: "2px solid #a282ff" }}
+                    >
                         {isEditing ? (
                             <input
                                 type="text"
                                 value={cvData.name}
-                                onChange={(e) => handleInputChange('name', e.target.value)}
-                                className="text-4xl font-bold mb-3 text-center w-full border-none outline-none bg-transparent"
-                                style={{ color: '#a282ff' }}
+                                onChange={(e) =>
+                                    handleInputChange("name", e.target.value)
+                                }
+                                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 text-center w-full border-none outline-none bg-transparent"
+                                style={{ color: "#a282ff" }}
                             />
                         ) : (
-                            <h1 className="text-4xl font-bold mb-3" style={{ color: '#a282ff' }}>
+                            <h1
+                                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3"
+                                style={{ color: "#a282ff" }}
+                            >
                                 {cvData.name}
                             </h1>
                         )}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold mb-4 border-b border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Professional Summary */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Professional Summary
                         </h2>
                         {isEditing ? (
                             <textarea
                                 value={cvData.summary}
-                                onChange={(e) => handleInputChange('summary', e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded text-gray-700 leading-relaxed resize-none"
+                                onChange={(e) =>
+                                    handleInputChange("summary", e.target.value)
+                                }
+                                className="w-full p-3 border border-gray-300 rounded text-gray-700 leading-relaxed resize-none text-sm sm:text-base"
                                 rows="4"
                             />
                         ) : (
-                            <p className="text-gray-700 leading-relaxed text-justify">
+                            <p className="text-gray-700 leading-relaxed text-justify text-sm sm:text-base">
                                 {cvData.summary}
                             </p>
                         )}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold mb-4 border-b border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Work Experience */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Work Experience
                         </h2>
                         {cvData.work_experience.map((exp, index) => (
                             <div
                                 key={index}
-                                className="mb-6 p-4 rounded-r-lg"
-                                style={{ borderLeft: '4px solid #a282ff', backgroundColor: '#f8fafc' }}
+                                className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-r-lg"
+                                style={{
+                                    borderLeft: "4px solid #a282ff",
+                                    backgroundColor: "#f8fafc",
+                                }}
                             >
                                 {isEditing ? (
                                     <>
                                         <input
                                             type="text"
                                             value={exp.job_title}
-                                            onChange={(e) => handleObjectArrayChange('work_experience', index, 'job_title', e.target.value)}
-                                            className="text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
-                                            style={{ color: '#a282ff' }}
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "work_experience",
+                                                    index,
+                                                    "job_title",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="text-lg sm:text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
+                                            style={{ color: "#a282ff" }}
                                         />
                                         <input
                                             type="text"
                                             value={exp.work_dates}
-                                            onChange={(e) => handleObjectArrayChange('work_experience', index, 'work_dates', e.target.value)}
-                                            className="text-sm text-gray-500 mb-3 w-full border border-gray-300 rounded px-2 py-1"
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "work_experience",
+                                                    index,
+                                                    "work_dates",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="text-xs sm:text-sm text-gray-500 mb-3 w-full border border-gray-300 rounded px-2 py-1"
                                         />
-                                        <div className="mb-2">
-                                            <span className="text-sm font-medium text-gray-600">Responsibilities:</span>
+                                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center gap-2">
+                                            <span className="text-sm font-medium text-gray-600">
+                                                Responsibilities:
+                                            </span>
                                             <button
-                                                onClick={() => addResponsibility(index)}
-                                                className="ml-2 text-xs px-2 py-1 rounded text-white"
-                                                style={{ backgroundColor: '#a282ff' }}
+                                                onClick={() =>
+                                                    addResponsibility(index)
+                                                }
+                                                className="text-xs px-2 py-1 rounded text-white w-fit"
+                                                style={{
+                                                    backgroundColor: "#a282ff",
+                                                }}
                                             >
                                                 Add
                                             </button>
                                         </div>
-                                        {exp.responsibilities.map((resp, respIndex) => (
-                                            <div key={respIndex} className="flex items-center mb-2">
-                                                <input
-                                                    type="text"
-                                                    value={resp}
-                                                    onChange={(e) => handleResponsibilityChange(index, respIndex, e.target.value)}
-                                                    className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
-                                                />
-                                                <button
-                                                    onClick={() => removeResponsibility(index, respIndex)}
-                                                    className="ml-2 text-xs px-2 py-1 bg-red-500 text-white rounded"
+                                        {exp.responsibilities.map(
+                                            (resp, respIndex) => (
+                                                <div
+                                                    key={respIndex}
+                                                    className="flex flex-col sm:flex-row gap-2 mb-2"
                                                 >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        ))}
+                                                    <input
+                                                        type="text"
+                                                        value={resp}
+                                                        onChange={(e) =>
+                                                            handleResponsibilityChange(
+                                                                index,
+                                                                respIndex,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        className="flex-1 border border-gray-300 rounded px-2 py-1 text-xs sm:text-sm"
+                                                    />
+                                                    <button
+                                                        onClick={() =>
+                                                            removeResponsibility(
+                                                                index,
+                                                                respIndex
+                                                            )
+                                                        }
+                                                        className="text-xs px-2 py-1 bg-red-500 text-white rounded w-fit"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            )
+                                        )}
                                     </>
                                 ) : (
                                     <>
-                                        <h3 className="text-xl font-bold" style={{ color: '#a282ff' }}>
+                                        <h3
+                                            className="text-lg sm:text-xl font-bold"
+                                            style={{ color: "#a282ff" }}
+                                        >
                                             {exp.job_title}
                                         </h3>
-                                        <p className="text-sm text-gray-500 mb-3">
+                                        <p className="text-xs sm:text-sm text-gray-500 mb-3">
                                             {exp.work_dates}
                                         </p>
-                                        <ul className="text-gray-700 leading-relaxed list-none">
-                                            {exp.responsibilities.map((resp, respIndex) => (
-                                                <li key={respIndex} className="mb-2 pl-4 relative">
-                                                    <span
-                                                        className="absolute left-0 font-bold"
-                                                        style={{ color: '#a282ff' }}
+                                        <ul className="text-gray-700 leading-relaxed list-none text-sm sm:text-base">
+                                            {exp.responsibilities.map(
+                                                (resp, respIndex) => (
+                                                    <li
+                                                        key={respIndex}
+                                                        className="mb-2 pl-4 relative"
                                                     >
-                                                        •
-                                                    </span>
-                                                    {resp}
-                                                </li>
-                                            ))}
+                                                        <span
+                                                            className="absolute left-0 font-bold"
+                                                            style={{
+                                                                color: "#a282ff",
+                                                            }}
+                                                        >
+                                                            •
+                                                        </span>
+                                                        {resp}
+                                                    </li>
+                                                )
+                                            )}
                                         </ul>
                                     </>
                                 )}
@@ -503,47 +598,78 @@ export default function CVPreview() {
                         ))}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold mb-4 border-b border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Education */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Education
                         </h2>
                         {cvData.education.map((edu, index) => (
                             <div
                                 key={index}
-                                className="mb-6 p-4 rounded-r-lg"
-                                style={{ borderLeft: '4px solid #a282ff', backgroundColor: '#f8fafc' }}
+                                className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-r-lg"
+                                style={{
+                                    borderLeft: "4px solid #a282ff",
+                                    backgroundColor: "#f8fafc",
+                                }}
                             >
                                 {isEditing ? (
                                     <>
                                         <input
                                             type="text"
                                             value={edu.degree}
-                                            onChange={(e) => handleObjectArrayChange('education', index, 'degree', e.target.value)}
-                                            className="text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
-                                            style={{ color: '#a282ff' }}
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "education",
+                                                    index,
+                                                    "degree",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="text-lg sm:text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
+                                            style={{ color: "#a282ff" }}
                                         />
                                         <input
                                             type="text"
                                             value={edu.institution}
-                                            onChange={(e) => handleObjectArrayChange('education', index, 'institution', e.target.value)}
-                                            className="text-lg text-gray-600 mb-2 w-full border border-gray-300 rounded px-2 py-1"
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "education",
+                                                    index,
+                                                    "institution",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="text-base sm:text-lg text-gray-600 mb-2 w-full border border-gray-300 rounded px-2 py-1"
                                         />
                                         <input
                                             type="text"
                                             value={edu.years}
-                                            onChange={(e) => handleObjectArrayChange('education', index, 'years', e.target.value)}
-                                            className="text-sm text-gray-500 w-full border border-gray-300 rounded px-2 py-1"
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "education",
+                                                    index,
+                                                    "years",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="text-xs sm:text-sm text-gray-500 w-full border border-gray-300 rounded px-2 py-1"
                                         />
                                     </>
                                 ) : (
                                     <>
-                                        <h3 className="text-xl font-bold" style={{ color: '#a282ff' }}>
+                                        <h3
+                                            className="text-lg sm:text-xl font-bold"
+                                            style={{ color: "#a282ff" }}
+                                        >
                                             {edu.degree}
                                         </h3>
-                                        <p className="text-lg text-gray-600 mb-1">
+                                        <p className="text-base sm:text-lg text-gray-600 mb-1">
                                             {edu.institution}
                                         </p>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-xs sm:text-sm text-gray-500">
                                             {edu.years}
                                         </p>
                                     </>
@@ -552,33 +678,51 @@ export default function CVPreview() {
                         ))}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl flex items-center font-bold mb-4 border-b border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Technical Skills */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Technical Skills
                             {isEditing && (
                                 <button
-                                    onClick={() => addSkill('technical_skills')}
-                                    className="ml-4 text-sm px-3 py-1 rounded text-white"
-                                    style={{ backgroundColor: '#a282ff' }}
+                                    onClick={() => addSkill("technical_skills")}
+                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
+                                    style={{ backgroundColor: "#a282ff" }}
                                 >
                                     Add Skill
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-3">
                                 {cvData.technical_skills.map((skill, index) => (
-                                    <div key={index} className="flex items-center gap-2 p-2 border border-gray-300 rounded">
+                                    <div
+                                        key={index}
+                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
+                                    >
                                         <input
                                             type="text"
                                             value={skill}
-                                            onChange={(e) => handleArrayChange('technical_skills', index, e.target.value)}
+                                            onChange={(e) =>
+                                                handleArrayChange(
+                                                    "technical_skills",
+                                                    index,
+                                                    e.target.value
+                                                )
+                                            }
                                             className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: '#a282ff' }}
+                                            style={{ color: "#a282ff" }}
                                         />
                                         <button
-                                            onClick={() => removeSkill('technical_skills', index)}
-                                            className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                            onClick={() =>
+                                                removeSkill(
+                                                    "technical_skills",
+                                                    index
+                                                )
+                                            }
+                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
                                         >
                                             Remove
                                         </button>
@@ -586,15 +730,15 @@ export default function CVPreview() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {cvData.technical_skills.map((skill, index) => (
                                     <div
                                         key={index}
-                                        className="px-4 py-2 rounded-full text-center font-medium border"
+                                        className="px-3 sm:px-4 py-2 rounded-full text-center font-medium border text-xs sm:text-sm"
                                         style={{
-                                            backgroundColor: '#f3f0ff',
-                                            color: '#a282ff',
-                                            borderColor: '#d8c8ff'
+                                            backgroundColor: "#f3f0ff",
+                                            color: "#a282ff",
+                                            borderColor: "#d8c8ff",
                                         }}
                                     >
                                         {skill}
@@ -604,33 +748,51 @@ export default function CVPreview() {
                         )}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl flex items-center font-bold mb-4 border-b border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Soft Skills */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Soft Skills
                             {isEditing && (
                                 <button
-                                    onClick={() => addSkill('soft_skills')}
-                                    className="ml-4 text-sm px-3 py-1 rounded text-white"
-                                    style={{ backgroundColor: '#a282ff' }}
+                                    onClick={() => addSkill("soft_skills")}
+                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
+                                    style={{ backgroundColor: "#a282ff" }}
                                 >
                                     Add Skill
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-3">
                                 {cvData.soft_skills.map((skill, index) => (
-                                    <div key={index} className="flex items-center gap-2 p-2 border border-gray-300 rounded">
+                                    <div
+                                        key={index}
+                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
+                                    >
                                         <input
                                             type="text"
                                             value={skill}
-                                            onChange={(e) => handleArrayChange('soft_skills', index, e.target.value)}
+                                            onChange={(e) =>
+                                                handleArrayChange(
+                                                    "soft_skills",
+                                                    index,
+                                                    e.target.value
+                                                )
+                                            }
                                             className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: '#a282ff' }}
+                                            style={{ color: "#a282ff" }}
                                         />
                                         <button
-                                            onClick={() => removeSkill('soft_skills', index)}
-                                            className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                            onClick={() =>
+                                                removeSkill(
+                                                    "soft_skills",
+                                                    index
+                                                )
+                                            }
+                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
                                         >
                                             Remove
                                         </button>
@@ -638,15 +800,15 @@ export default function CVPreview() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {cvData.soft_skills.map((skill, index) => (
                                     <div
                                         key={index}
-                                        className="px-4 py-2 rounded-full text-center font-medium border"
+                                        className="px-3 sm:px-4 py-2 rounded-full text-center font-medium border text-xs sm:text-sm"
                                         style={{
-                                            backgroundColor: '#f3f0ff',
-                                            color: '#a282ff',
-                                            borderColor: '#d8c8ff'
+                                            backgroundColor: "#f3f0ff",
+                                            color: "#a282ff",
+                                            borderColor: "#d8c8ff",
                                         }}
                                     >
                                         {skill}
@@ -656,33 +818,51 @@ export default function CVPreview() {
                         )}
                     </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold mb-4 border-b flex items-center border-gray-200 pb-2" style={{ color: '#a282ff' }}>
+                    {/* Looking For Job */}
+                    <div className="mb-6 sm:mb-8">
+                        <h2
+                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-gray-200 pb-2"
+                            style={{ color: "#a282ff" }}
+                        >
                             Looking For Job
                             {isEditing && (
                                 <button
-                                    onClick={() => addSkill('lookingForJob')}
-                                    className="ml-4 text-sm px-3 py-1 rounded text-white"
-                                    style={{ backgroundColor: '#a282ff' }}
+                                    onClick={() => addSkill("lookingForJob")}
+                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
+                                    style={{ backgroundColor: "#a282ff" }}
                                 >
                                     Add looking for job
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-3">
                                 {cvData.lookingForJob.map((interest, index) => (
-                                    <div key={index} className="flex items-center gap-2 p-2 border border-gray-300 rounded">
+                                    <div
+                                        key={index}
+                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
+                                    >
                                         <input
                                             type="text"
                                             value={interest}
-                                            onChange={(e) => handleArrayChange('lookingForJob', index, e.target.value)}
+                                            onChange={(e) =>
+                                                handleArrayChange(
+                                                    "lookingForJob",
+                                                    index,
+                                                    e.target.value
+                                                )
+                                            }
                                             className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: '#8b5cff' }}
+                                            style={{ color: "#8b5cff" }}
                                         />
                                         <button
-                                            onClick={() => removeSkill('lookingForJob', index)}
-                                            className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                            onClick={() =>
+                                                removeSkill(
+                                                    "lookingForJob",
+                                                    index
+                                                )
+                                            }
+                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
                                         >
                                             Remove
                                         </button>
@@ -690,15 +870,15 @@ export default function CVPreview() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex gap-4 flex-wrap">
+                            <div className="flex gap-2 sm:gap-4 flex-wrap">
                                 {cvData.lookingForJob.map((interest, index) => (
                                     <div
                                         key={index}
-                                        className="px-4 py-2 rounded-full font-medium border"
+                                        className="px-3 sm:px-4 py-2 rounded-full font-medium border text-xs sm:text-sm"
                                         style={{
-                                            backgroundColor: '#f3f0ff',
-                                            color: '#8b5cff',
-                                            borderColor: '#d8c8ff'
+                                            backgroundColor: "#f3f0ff",
+                                            color: "#8b5cff",
+                                            borderColor: "#d8c8ff",
                                         }}
                                     >
                                         {interest}
