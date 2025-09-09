@@ -314,7 +314,7 @@ export default function CVPreview() {
             <div class="section">
               <h2 class="section-title">Interests</h2>
               <div class="interests-list">
-                ${cvData.interests
+                ${cvData.lookingForJob
                     .map(
                         (interest) =>
                             `<div class="interest-item">${interest}</div>`
@@ -658,30 +658,30 @@ export default function CVPreview() {
 
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold mb-4 border-b flex items-center border-gray-200 pb-2" style={{ color: '#a282ff' }}>
-                            Interests
+                            Looking For Job
                             {isEditing && (
                                 <button
-                                    onClick={() => addSkill('interests')}
+                                    onClick={() => addSkill('lookingForJob')}
                                     className="ml-4 text-sm px-3 py-1 rounded text-white"
                                     style={{ backgroundColor: '#a282ff' }}
                                 >
-                                    Add Interest
+                                    Add looking for job
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
                             <div className="grid grid-cols-2 gap-3">
-                                {cvData.interests.map((interest, index) => (
+                                {cvData.lookingForJob.map((interest, index) => (
                                     <div key={index} className="flex items-center gap-2 p-2 border border-gray-300 rounded">
                                         <input
                                             type="text"
                                             value={interest}
-                                            onChange={(e) => handleArrayChange('interests', index, e.target.value)}
+                                            onChange={(e) => handleArrayChange('lookingForJob', index, e.target.value)}
                                             className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
                                             style={{ color: '#8b5cff' }}
                                         />
                                         <button
-                                            onClick={() => removeSkill('interests', index)}
+                                            onClick={() => removeSkill('lookingForJob', index)}
                                             className="text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                                         >
                                             Remove
@@ -691,7 +691,7 @@ export default function CVPreview() {
                             </div>
                         ) : (
                             <div className="flex gap-4 flex-wrap">
-                                {cvData.interests.map((interest, index) => (
+                                {cvData.lookingForJob.map((interest, index) => (
                                     <div
                                         key={index}
                                         className="px-4 py-2 rounded-full font-medium border"

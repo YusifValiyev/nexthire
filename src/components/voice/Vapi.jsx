@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { VapiWidget } from "@vapi-ai/client-sdk-react";
 import "./index.css";
 import { useNavigate } from "react-router";
@@ -6,10 +6,11 @@ import Loading from "../layout/Loading";
 import { toast } from "react-toastify";
 
 export default function Vapi() {
-    const [cvData, setCvData] = useState(null);
     const [cvGenerated, setCvGenerated] = useState(null);
     const [loading, setLoading] = useState(false);
     const [messages, setMessages] = useState([]);
+    const evtSourceRef = useRef(null); // 👈 EventSource-u yadda saxlayırıq
+
     const endedMessages = [
         "please end call",
         "please end the call",
@@ -17,22 +18,22 @@ export default function Vapi() {
     ];
 
     function isEndedMessage(message) {
-        for (let item of endedMessages) {
-            if (message.includes(item)) {
-                return true;
-            }
-        }
-        return false;
+        return endedMessages.some((item) => message.includes(item));
     }
 
     const navigate = useNavigate();
 
-    useEffect(() => {
+    // SSE-dən gələn mesajları handle edən funksiya
+    const initEventSource = () => {
+        if (evtSourceRef.current) return; // artıq açılıbsa təkrar açma
+
         const evtSource = new EventSource(
             "https://nexthirebackend.vercel.app/events"
         );
+        evtSourceRef.current = evtSource;
 
         evtSource.onmessage = (event) => {
+            console.log(event);
             try {
                 const data = JSON.parse(event.data);
 
@@ -44,40 +45,59 @@ export default function Vapi() {
                         state: { cvData: data.content },
                     });
                     setLoading(false);
+                    closeEventSource(); // işimiz bitdi → bağla
                 }
 
                 if (data.type === "error" && data.errorType === "user-error") {
                     toast.error(data.message);
                     setLoading(false);
+                    closeEventSource(); // error olsa da bağla
                 }
             } catch (err) {
                 console.error("Error parsing SSE data:", err);
                 toast.error("Something went wrong");
                 setLoading(false);
+                closeEventSource();
             }
         };
 
         evtSource.onerror = (err) => {
             console.error("SSE error:", err);
-            evtSource.close();
             setLoading(false);
+            closeEventSource();
         };
+    };
 
-        return () => evtSource.close();
-    }, [navigate]);
+    const closeEventSource = () => {
+        if (evtSourceRef.current) {
+            evtSourceRef.current.close();
+            evtSourceRef.current = null;
+        }
+    };
 
-    const handleCallStart = () => console.log("Voice call started");
-    const handleCallEnd = () => setLoading(true);
+    // komponent unmount olarsa SSE-ni bağla
+    useEffect(() => {
+        return () => closeEventSource();
+    }, []);
+
+    const handleCallStart = () => {
+        console.log("Voice call started");
+        initEventSource(); // 👈 Call start olanda SSE-ni açırıq
+    };
+
+    const handleCallEnd = () => {
+        setLoading(true);
+        // Call bitəndə də istəsən bağlaya bilərsən (yuxarıda closeEventSource çağırmaq olar)
+    };
+
     const handleMessage = async (message) => {
         setMessages((prev) => [...prev, message]);
 
-        // Mesaj bitişini yoxla
         if (
             message.role === "assistant" &&
             typeof message.content === "string" &&
             isEndedMessage(message.content)
         ) {
-            // Call bitdi → bütün user mesajlarını backend-ə göndər
             try {
                 setLoading(true);
                 const userMessages = messages
@@ -87,10 +107,18 @@ export default function Vapi() {
                     )
                     .map((m) => ({ role: "user", message: m.content }));
 
-                await fetch("https://nexthirebackend.vercel.app/webhook-chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ messages: userMessages }),
+                const response = await fetch(
+                    "https://nexthirebackend.vercel.app/webhook-chat",
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ messages: userMessages }),
+                    }
+                );
+                const data = await response.json();
+                setCvGenerated(data);
+                navigate("/cv-preview", {
+                    state: { cvData: data.cv },
                 });
             } catch (err) {
                 console.error("Failed to send chat messages:", err);
@@ -99,20 +127,22 @@ export default function Vapi() {
             }
         }
     };
+
     const handleError = (error) => console.error("Widget error:", error);
 
     if (loading) {
         return <Loading />;
     }
+
     return (
         <div>
             <VapiWidget
-                publicKey="8118bbe9-dae4-40c5-b7af-30300a1539be"
-                assistantId="55389fd7-ee50-4c73-9cee-7bd063c11979"
+                publicKey="4444ee11-96a0-4bac-a85a-e688eb1dc986"
+                assistantId="4546a733-7705-4110-a501-36ca14aed740"
                 mode="hybrid"
                 onMessage={handleMessage}
                 onVoiceEnd={handleCallEnd}
-                onVoiceStart={handleCallStart}
+                onVoiceStart={handleCallStart} // 👈 burada SSE start
                 onError={handleError}
                 ctaButtonColor="#000"
                 voiceShowTranscript={true}
