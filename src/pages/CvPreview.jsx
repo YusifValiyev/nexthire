@@ -1,5 +1,8 @@
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import html2pdf from "html2pdf.js";
 
 export default function CVPreview() {
     const location = useLocation();
@@ -19,7 +22,22 @@ export default function CVPreview() {
 
             const jsonString = trimmed.slice(firstBrace, lastBrace + 1);
             const cvObject = JSON.parse(jsonString);
-            return cvObject;
+
+            // Ensure all required fields exist with defaults
+            return {
+                name: cvObject.name || "",
+                email: cvObject.email || "",
+                phone: cvObject.phone || "",
+                location: cvObject.location || "",
+                linkedin: cvObject.linkedin || "",
+                summary: cvObject.summary || "",
+                work_experience: cvObject.work_experience || [],
+                education: cvObject.education || [],
+                technical_skills: cvObject.technical_skills || [],
+                soft_skills: cvObject.soft_skills || [],
+                lookingForJob: cvObject.lookingForJob || [],
+                ...cvObject
+            };
         } catch (err) {
             console.error("Failed to parse CV JSON:", err);
             return null;
@@ -61,6 +79,8 @@ export default function CVPreview() {
                           responsibilities: exp.responsibilities.map(
                               (resp, j) => (j === respIndex ? value : resp)
                           ),
+
+
                       }
                     : exp
             ),
@@ -114,248 +134,37 @@ export default function CVPreview() {
         }));
     };
 
-    const handleDownloadPDF = () => {
-        const printWindow = window.open("", "_blank");
+    const handleDownloadPDF = async () => {
+        const content = document.getElementById("cv-content");
 
-        const cvHTML = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${cvData.name} - CV</title>
-          <style>
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
-
-            body {
-              font-family: 'Arial', sans-serif;
-              line-height: 1.6;
-              color: #333;
-              background: white;
-            }
-
-            .cv-container {
-              max-width: 800px;
-              margin: 0 auto;
-              padding: 40px 20px;
-              background: white;
-            }
-
-            .header {
-              text-align: center;
-              margin-bottom: 30px;
-              border-bottom: 2px solid #a282ff;
-              padding-bottom: 20px;
-            }
-
-            .name {
-              font-size: 28px;
-              font-weight: bold;
-              color: #a282ff;
-              margin-bottom: 10px;
-            }
-
-            .section {
-              margin-bottom: 25px;
-            }
-
-            .section-title {
-              font-size: 18px;
-              font-weight: bold;
-              color: #a282ff;
-              margin-bottom: 15px;
-              border-bottom: 1px solid #e5e7eb;
-              padding-bottom: 5px;
-            }
-
-            .summary-text {
-              text-align: justify;
-              color: #4b5563;
-              line-height: 1.7;
-            }
-
-            .experience-item, .education-item {
-              margin-bottom: 20px;
-              padding: 15px;
-              border-left: 3px solid #a282ff;
-              background: #f8fafc;
-            }
-
-            .job-title {
-              font-size: 16px;
-              font-weight: bold;
-              color: #a282ff;
-            }
-
-            .years {
-              font-size: 14px;
-              color: #9ca3af;
-              margin-bottom: 10px;
-            }
-
-            .description {
-              color: #4b5563;
-              line-height: 1.6;
-            }
-
-            .responsibilities {
-              color: #4b5563;
-              line-height: 1.6;
-              list-style: none;
-              padding: 0;
-            }
-
-            .responsibilities li {
-              margin-bottom: 5px;
-              padding-left: 15px;
-              position: relative;
-            }
-
-            .responsibilities li:before {
-              content: "•";
-              color: #a282ff;
-              font-weight: bold;
-              position: absolute;
-              left: 0;
-            }
-
-            .skills-grid {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 8px;
-              margin-top: 10px;
-            }
-
-            .skill-item {
-              background: #f3f0ff;
-              color: #a282ff;
-              padding: 6px 12px;
-              border-radius: 20px;
-              text-align: center;
-              font-size: 13px;
-              border: 1px solid #d8c8ff;
-              flex: 0 0 auto;
-            }
-
-            .interests-list {
-              display: flex;
-              gap: 8px;
-              flex-wrap: wrap;
-            }
-
-            .interest-item {
-              background: #f3f0ff;
-              color: #8b5cff;
-              padding: 6px 12px;
-              border-radius: 15px;
-              font-size: 13px;
-              border: 1px solid #d8c8ff;
-            }
-
-            @media print {
-              .cv-container {
-                padding: 20px;
-                box-shadow: none;
-              }
-
-              .name {
-                font-size: 24px;
-              }
-
-              .section-title {
-                font-size: 16px;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="cv-container">
-            <div class="header">
-              <h1 class="name">${cvData.name}</h1>
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Professional Summary</h2>
-              <p class="summary-text">${cvData.summary}</p>
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Work Experience</h2>
-              ${cvData.work_experience
-                  .map(
-                      (exp) => `
-                <div class="experience-item">
-                  <div class="job-title">${exp.job_title}</div>
-                  <div class="years">${exp.work_dates}</div>
-                  <ul class="responsibilities">
-                    ${exp.responsibilities
-                        .map((resp) => `<li>${resp}</li>`)
-                        .join("")}
-                  </ul>
-                </div>
-              `
-                  )
-                  .join("")}
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Education</h2>
-              ${cvData.education
-                  .map(
-                      (edu) => `
-                <div class="education-item">
-                  <div class="job-title">${edu.degree}</div>
-                  <div class="description">${edu.institution}</div>
-                  <div class="years">${edu.years}</div>
-                </div>
-              `
-                  )
-                  .join("")}
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Technical Skills</h2>
-              <div class="skills-grid">
-                ${cvData.technical_skills
-                    .map((skill) => `<div class="skill-item">${skill}</div>`)
-                    .join("")}
-              </div>
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Soft Skills</h2>
-              <div class="skills-grid">
-                ${cvData.soft_skills
-                    .map((skill) => `<div class="skill-item">${skill}</div>`)
-                    .join("")}
-              </div>
-            </div>
-
-            <div class="section">
-              <h2 class="section-title">Interests</h2>
-              <div class="interests-list">
-                ${cvData.lookingForJob
-                    .map(
-                        (interest) =>
-                            `<div class="interest-item">${interest}</div>`
-                    )
-                    .join("")}
-              </div>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-
-        printWindow.document.write(cvHTML);
-        printWindow.document.close();
-
-        printWindow.onload = () => {
-            printWindow.print();
-            printWindow.close();
+        // Optimize for ATS-friendly PDF
+        const options = {
+            filename: `${cvData.name.replace(/\s+/g, '_')}-CV.pdf`,
+            image: {
+                type: "jpeg",
+                quality: 0.98,
+            },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                letterRendering: true,
+                allowTaint: false,
+                scrollY: -window.scrollY,
+                windowWidth: content.scrollWidth,
+                windowHeight: content.scrollHeight,
+                backgroundColor: "#ffffff",
+            },
+            jsPDF: {
+                unit: "mm",
+                format: "a4",
+                orientation: "portrait",
+                compress: true,
+            },
+            margin: [10, 10, 10, 10], // Top, right, bottom, left margins
         };
+
+        html2pdf().set(options).from(content).save();
     };
 
     const handleBack = () => {
@@ -364,12 +173,19 @@ export default function CVPreview() {
 
     if (!cvData) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-                <div className="text-center">
-                    <p className="text-gray-600 mb-4">No CV data found.</p>
+            <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                    <p style={{ color: '#4b5563', marginBottom: '1rem' }}>No CV data found.</p>
                     <button
                         onClick={handleBack}
-                        className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                        style={{
+                            padding: '0.5rem 1rem',
+                            backgroundColor: '#4b5563',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '0.375rem',
+                            cursor: 'pointer'
+                        }}
                     >
                         Back
                     </button>
@@ -379,31 +195,54 @@ export default function CVPreview() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
+        <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '2rem 0' }}>
             {/* Header with responsive button layout */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-4 sm:mb-6">
-                <div className="flex w-full flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+            <div style={{ maxWidth: '56rem', margin: '0 auto', padding: '0 1.5rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', width: '100%', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
                     <button
                         onClick={handleBack}
-                        className="px-4 sm:px-6 w-full sm:w-fit! py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
-                        style={{ backgroundColor: "#a282ff" }}
+                        style={{
+                            padding: '0.75rem 1.5rem',
+                            width: '100%',
+                            color: 'white',
+                            backgroundColor: "#a282ff",
+                            border: 'none',
+                            borderRadius: '0.5rem',
+                            cursor: 'pointer',
+                            fontWeight: '500',
+                            fontSize: '0.875rem'
+                        }}
                     >
                         Back
                     </button>
-                    <div className="flex flex-col justify-end sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '0.5rem', width: '100%' }}>
                         <button
                             onClick={() => setIsEditing(!isEditing)}
-                            className="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
                             style={{
+                                padding: '0.75rem 1.5rem',
+                                color: 'white',
                                 backgroundColor: isEditing ? "#666" : "#a282ff",
+                                border: 'none',
+                                borderRadius: '0.5rem',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                fontSize: '0.875rem'
                             }}
                         >
                             {isEditing ? "View Mode" : "Edit Mode"}
                         </button>
                         <button
                             onClick={handleDownloadPDF}
-                            className="px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg hover:opacity-90 transition-all font-medium text-sm sm:text-base"
-                            style={{ backgroundColor: "#a282ff" }}
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                color: 'white',
+                                backgroundColor: "#a282ff",
+                                border: 'none',
+                                borderRadius: '0.5rem',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                fontSize: '0.875rem'
+                            }}
                         >
                             Download PDF
                         </button>
@@ -414,75 +253,236 @@ export default function CVPreview() {
             {/* CV Content */}
             <div
                 id="cv-content"
-                className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mx-4 sm:mx-auto"
+                style={{
+                    maxWidth: '56rem',
+                    backgroundColor: 'white',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    margin: '0 1rem',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    fontFamily: 'Arial, sans-serif, system-ui',
+                    lineHeight: '1.6',
+                    color: '#333333'
+                }}
             >
-                <div className="p-4 sm:p-6 lg:p-8">
-                    {/* Header */}
-                    <div
-                        className="text-center mb-6 sm:mb-8 pb-4 sm:pb-6"
-                        style={{ borderBottom: "2px solid #a282ff" }}
-                    >
+                <div style={{ padding: '3rem 2.5rem', maxWidth: '800px', margin: '0 auto' }}>
+                    <style>{`
+                        @media print {
+                            * {
+                                -webkit-print-color-adjust: exact !important;
+                                color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+
+                            #cv-content {
+                                box-shadow: none !important;
+                                margin: 0 !important;
+                                max-width: none !important;
+                                padding: 2rem !important;
+                            }
+
+                            .page-break {
+                                page-break-before: always;
+                            }
+
+                            h1, h2, h3, h4, h5, h6 {
+                                page-break-after: avoid;
+                                margin-top: 0 !important;
+                            }
+
+                            ul, ol {
+                                page-break-inside: avoid;
+                            }
+
+                            section {
+                                break-inside: avoid-page;
+                                page-break-inside: avoid;
+                            }
+                        }
+                    `}</style>
+                    {/* Header Section */}
+                    <header style={{ textAlign: 'center', marginBottom: '3.5rem', paddingBottom: '2rem', borderBottom: '3px solid #a282ff' }}>
                         {isEditing ? (
-                            <input
-                                type="text"
-                                value={cvData.name}
-                                onChange={(e) =>
-                                    handleInputChange("name", e.target.value)
-                                }
-                                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 text-center w-full border-none outline-none bg-transparent"
-                                style={{ color: "#a282ff" }}
-                            />
+                            <>
+                                <input
+                                    type="text"
+                                    value={cvData.name}
+                                    onChange={(e) => handleInputChange("name", e.target.value)}
+                                    style={{
+                                        fontSize: '2.5rem',
+                                        fontWeight: 'bold',
+                                        marginBottom: '1.5rem',
+                                        textAlign: 'center',
+                                        width: '100%',
+                                        border: 'none',
+                                        outline: 'none',
+                                        backgroundColor: 'transparent',
+                                        color: "#a282ff",
+                                        lineHeight: '1.2'
+                                    }}
+                                />
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '600px', margin: '0 auto' }}>
+                                    <input
+                                        type="email"
+                                        value={cvData.email || ""}
+                                        onChange={(e) => handleInputChange("email", e.target.value)}
+                                        placeholder="Email address"
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '0.5rem',
+                                            padding: '0.5rem 1rem',
+                                            color: '#374151',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                    <input
+                                        type="tel"
+                                        value={cvData.phone || ""}
+                                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                                        placeholder="Phone number"
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '0.5rem',
+                                            padding: '0.5rem 1rem',
+                                            color: '#374151',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                    <input
+                                        type="text"
+                                        value={cvData.location || ""}
+                                        onChange={(e) => handleInputChange("location", e.target.value)}
+                                        placeholder="Location"
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '0.5rem',
+                                            padding: '0.5rem 1rem',
+                                            color: '#374151',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                    <input
+                                        type="url"
+                                        value={cvData.linkedin || ""}
+                                        onChange={(e) => handleInputChange("linkedin", e.target.value)}
+                                        placeholder="LinkedIn URL"
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '0.5rem',
+                                            padding: '0.5rem 1rem',
+                                            color: '#374151',
+                                            fontSize: '1rem'
+                                        }}
+                                    />
+                                </div>
+                            </>
                         ) : (
-                            <h1
-                                className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3"
-                                style={{ color: "#a282ff" }}
-                            >
-                                {cvData.name}
-                            </h1>
+                            <>
+                                <h1 style={{
+                                    fontSize: '2.5rem',
+                                    fontWeight: 'bold',
+                                    marginBottom: '1.5rem',
+                                    color: "#a282ff",
+                                    lineHeight: '1.2',
+                                    letterSpacing: '-0.025em'
+                                }}>
+                                    {cvData.name}
+                                </h1>
+                                <div style={{
+                                    color: '#374151',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.6rem',
+                                    maxWidth: '600px',
+                                    margin: '0 auto',
+                                    lineHeight: '1.5'
+                                }}>
+                                    {cvData.email && <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{cvData.email}</div>}
+                                    {cvData.phone && <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{cvData.phone}</div>}
+                                    {cvData.location && <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>{cvData.location}</div>}
+                                    {cvData.linkedin && (
+                                        <div style={{ fontSize: '1.1rem', fontWeight: '500' }}>
+                                            <a href={cvData.linkedin} style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                                                {cvData.linkedin}
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         )}
-                    </div>
+                    </header>
 
                     {/* Professional Summary */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Professional Summary
+                    <section style={{ marginBottom: '2rem' }}>
+                        <h2 style={{
+                            fontSize: '1.375rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem',
+                            paddingBottom: '0.75rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            color: "#a282ff"
+                        }}>
+                            PROFESSIONAL SUMMARY
                         </h2>
                         {isEditing ? (
                             <textarea
                                 value={cvData.summary}
-                                onChange={(e) =>
-                                    handleInputChange("summary", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded text-gray-700 leading-relaxed resize-none text-sm sm:text-base"
-                                rows="4"
+                                onChange={(e) => handleInputChange("summary", e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '1rem',
+                                    border: '1px solid #d1d5db',
+                                    borderRadius: '0.5rem',
+                                    color: '#374151',
+                                    lineHeight: '1.7',
+                                    resize: 'none',
+                                    fontSize: '1rem'
+                                }}
+                                rows="5"
                             />
                         ) : (
-                            <p className="text-gray-700 leading-relaxed text-justify text-sm sm:text-base">
+                            <p style={{
+                                color: '#374151',
+                                lineHeight: '1.7',
+                                textAlign: 'justify',
+                                fontSize: '1rem',
+                                marginTop: '0.5rem'
+                            }}>
                                 {cvData.summary}
                             </p>
                         )}
-                    </div>
+                    </section>
 
                     {/* Work Experience */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Work Experience
+                    <section style={{ marginBottom: '2rem' }}>
+                        <h2 style={{
+                            fontSize: '1.375rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem',
+                            paddingBottom: '0.75rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            color: "#a282ff"
+                        }}>
+                            PROFESSIONAL EXPERIENCE
                         </h2>
                         {cvData.work_experience.map((exp, index) => (
-                            <div
-                                key={index}
-                                className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-r-lg"
-                                style={{
-                                    borderLeft: "4px solid #a282ff",
-                                    backgroundColor: "#f8fafc",
-                                }}
-                            >
+                            <div key={index} style={{
+                                marginBottom: '2.5rem',
+                                paddingBottom: '1.5rem',
+                                borderBottom: index < cvData.work_experience.length - 1 ? '1px solid #e5e7eb' : 'none'
+                            }}>
                                 {isEditing ? (
                                     <>
                                         <input
@@ -496,8 +496,39 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="text-lg sm:text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
-                                            style={{ color: "#a282ff" }}
+                                            style={{
+                                                fontSize: '1.125rem',
+                                                fontWeight: 'bold',
+                                                width: '100%',
+                                                marginBottom: '0.5rem',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem',
+                                                color: "#a282ff"
+                                            }}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={exp.company || ""}
+                                            onChange={(e) =>
+                                                handleObjectArrayChange(
+                                                    "work_experience",
+                                                    index,
+                                                    "company",
+                                                    e.target.value
+                                                )
+                                            }
+                                            placeholder="Company Name"
+                                            style={{
+                                                fontSize: '1rem',
+                                                fontWeight: '500',
+                                                width: '100%',
+                                                marginBottom: '0.5rem',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem',
+                                                color: '#374151'
+                                            }}
                                         />
                                         <input
                                             type="text"
@@ -510,111 +541,164 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="text-xs sm:text-sm text-gray-500 mb-3 w-full border border-gray-300 rounded px-2 py-1"
+                                            style={{
+                                                fontSize: '0.875rem',
+                                                color: '#4b5563',
+                                                marginBottom: '0.75rem',
+                                                width: '100%',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem'
+                                            }}
                                         />
-                                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center gap-2">
-                                            <span className="text-sm font-medium text-gray-600">
-                                                Responsibilities:
+                                        <div style={{ marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#4b5563' }}>
+                                                Key Achievements & Responsibilities:
                                             </span>
                                             <button
-                                                onClick={() =>
-                                                    addResponsibility(index)
-                                                }
-                                                className="text-xs px-2 py-1 rounded text-white w-fit"
+                                                onClick={() => addResponsibility(index)}
                                                 style={{
-                                                    backgroundColor: "#a282ff",
+                                                    fontSize: '0.75rem',
+                                                    padding: '0.25rem 0.5rem',
+                                                    borderRadius: '0.375rem',
+                                                    color: 'white',
+                                                    width: 'fit-content',
+                                                    border: 'none',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: "#a282ff"
                                                 }}
                                             >
                                                 Add
                                             </button>
                                         </div>
-                                        {exp.responsibilities.map(
-                                            (resp, respIndex) => (
-                                                <div
-                                                    key={respIndex}
-                                                    className="flex flex-col sm:flex-row gap-2 mb-2"
+                                        {exp.responsibilities.map((resp, respIndex) => (
+                                            <div key={respIndex} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                                <input
+                                                    type="text"
+                                                    value={resp}
+                                                    onChange={(e) =>
+                                                        handleResponsibilityChange(
+                                                            index,
+                                                            respIndex,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    style={{
+                                                        flex: '1',
+                                                        border: '1px solid #d1d5db',
+                                                        borderRadius: '0.375rem',
+                                                        padding: '0.5rem',
+                                                        fontSize: '0.875rem'
+                                                    }}
+                                                />
+                                                <button
+                                                    onClick={() =>
+                                                        removeResponsibility(index, respIndex)
+                                                    }
+                                                    style={{
+                                                        fontSize: '0.75rem',
+                                                        padding: '0.25rem 0.5rem',
+                                                        backgroundColor: '#ef4444',
+                                                        color: 'white',
+                                                        borderRadius: '0.375rem',
+                                                        width: 'fit-content',
+                                                        border: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
                                                 >
-                                                    <input
-                                                        type="text"
-                                                        value={resp}
-                                                        onChange={(e) =>
-                                                            handleResponsibilityChange(
-                                                                index,
-                                                                respIndex,
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        className="flex-1 border border-gray-300 rounded px-2 py-1 text-xs sm:text-sm"
-                                                    />
-                                                    <button
-                                                        onClick={() =>
-                                                            removeResponsibility(
-                                                                index,
-                                                                respIndex
-                                                            )
-                                                        }
-                                                        className="text-xs px-2 py-1 bg-red-500 text-white rounded w-fit"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
-                                            )
-                                        )}
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ))}
                                     </>
                                 ) : (
                                     <>
-                                        <h3
-                                            className="text-lg sm:text-xl font-bold"
-                                            style={{ color: "#a282ff" }}
-                                        >
-                                            {exp.job_title}
-                                        </h3>
-                                        <p className="text-xs sm:text-sm text-gray-500 mb-3">
-                                            {exp.work_dates}
-                                        </p>
-                                        <ul className="text-gray-700 leading-relaxed list-none text-sm sm:text-base">
-                                            {exp.responsibilities.map(
-                                                (resp, respIndex) => (
-                                                    <li
-                                                        key={respIndex}
-                                                        className="mb-2 pl-4 relative"
-                                                    >
-                                                        <span
-                                                            className="absolute left-0 font-bold"
-                                                            style={{
-                                                                color: "#a282ff",
-                                                            }}
-                                                        >
-                                                            •
-                                                        </span>
-                                                        {resp}
-                                                    </li>
-                                                )
-                                            )}
+                                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                <h3 style={{
+                                                    fontSize: '1.25rem',
+                                                    fontWeight: 'bold',
+                                                    color: "#a282ff",
+                                                    marginBottom: '0.25rem',
+                                                    lineHeight: '1.3'
+                                                }}>
+                                                    {exp.job_title}
+                                                </h3>
+                                                <p style={{
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    color: '#374151',
+                                                    marginBottom: '0.25rem'
+                                                }}>
+                                                    {exp.company || exp.institution || ""}
+                                                </p>
+                                            </div>
+                                            <p style={{
+                                                fontSize: '0.95rem',
+                                                color: '#6b7280',
+                                                fontWeight: '500',
+                                                fontStyle: 'italic'
+                                            }}>
+                                                {exp.work_dates}
+                                            </p>
+                                        </div>
+                                        <ul style={{
+                                            color: '#374151',
+                                            lineHeight: '1.7',
+                                            listStyle: 'none',
+                                            padding: 0,
+                                            marginTop: '1rem'
+                                        }}>
+                                            {exp.responsibilities.map((resp, respIndex) => (
+                                                <li key={respIndex} style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+
+                                                    marginBottom: '0.75rem'
+                                                }}>
+                                                    <span style={{
+                                                        fontSize: '1rem',
+                                                        marginRight: '0.75rem',
+                                                        marginTop: '0.125rem',
+                                                        flexShrink: 0,
+                                                        color: "#a282ff",
+                                                        fontWeight: 'bold'
+                                                    }}>
+                                                        •
+                                                    </span>
+                                                    <span style={{
+                                                        fontSize: '0.95rem',
+                                                        lineHeight: '1.6'
+                                                    }}>{resp}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </>
                                 )}
                             </div>
                         ))}
-                    </div>
+                    </section>
 
                     {/* Education */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Education
+                    <section style={{ marginBottom: '2rem' }}>
+                        <h2 style={{
+                            fontSize: '1.375rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem',
+                            paddingBottom: '0.75rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            color: "#a282ff"
+                        }}>
+                            EDUCATION
                         </h2>
                         {cvData.education.map((edu, index) => (
-                            <div
-                                key={index}
-                                className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-r-lg"
-                                style={{
-                                    borderLeft: "4px solid #a282ff",
-                                    backgroundColor: "#f8fafc",
-                                }}
-                            >
+                            <div key={index} style={{
+                                marginBottom: '2rem',
+                                paddingBottom: '1.5rem',
+                                borderBottom: index < cvData.education.length - 1 ? '1px solid #e5e7eb' : 'none'
+                            }}>
                                 {isEditing ? (
                                     <>
                                         <input
@@ -628,8 +712,16 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="text-lg sm:text-xl font-bold w-full mb-2 border border-gray-300 rounded px-2 py-1"
-                                            style={{ color: "#a282ff" }}
+                                            style={{
+                                                fontSize: '1.125rem',
+                                                fontWeight: 'bold',
+                                                width: '100%',
+                                                marginBottom: '0.5rem',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem',
+                                                color: "#a282ff"
+                                            }}
                                         />
                                         <input
                                             type="text"
@@ -642,7 +734,15 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="text-base sm:text-lg text-gray-600 mb-2 w-full border border-gray-300 rounded px-2 py-1"
+                                            style={{
+                                                fontSize: '1rem',
+                                                color: '#374151',
+                                                marginBottom: '0.5rem',
+                                                width: '100%',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem'
+                                            }}
                                         />
                                         <input
                                             type="text"
@@ -655,53 +755,102 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="text-xs sm:text-sm text-gray-500 w-full border border-gray-300 rounded px-2 py-1"
+                                            style={{
+                                                fontSize: '0.875rem',
+                                                color: '#4b5563',
+                                                width: '100%',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.5rem'
+                                            }}
                                         />
                                     </>
                                 ) : (
                                     <>
-                                        <h3
-                                            className="text-lg sm:text-xl font-bold"
-                                            style={{ color: "#a282ff" }}
-                                        >
-                                            {edu.degree}
-                                        </h3>
-                                        <p className="text-base sm:text-lg text-gray-600 mb-1">
-                                            {edu.institution}
-                                        </p>
-                                        <p className="text-xs sm:text-sm text-gray-500">
-                                            {edu.years}
-                                        </p>
+                                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                <h3 style={{
+                                                    fontSize: '1.25rem',
+                                                    fontWeight: 'bold',
+                                                    color: "#a282ff",
+                                                    marginBottom: '0.25rem',
+                                                    lineHeight: '1.3'
+                                                }}>
+                                                    {edu.degree}
+                                                </h3>
+                                                <p style={{
+                                                    fontSize: '1.1rem',
+                                                    fontWeight: '600',
+                                                    color: '#374151',
+                                                    marginBottom: '0.25rem'
+                                                }}>
+                                                    {edu.institution}
+                                                </p>
+                                            </div>
+                                            <p style={{
+                                                fontSize: '0.95rem',
+                                                color: '#6b7280',
+                                                fontWeight: '500',
+                                                fontStyle: 'italic'
+                                            }}>
+                                                {edu.years}
+                                            </p>
+                                        </div>
+                                        {edu.gpa && (
+                                            <p style={{
+                                                fontSize: '0.95rem',
+                                                color: '#4b5563',
+                                                marginTop: '0.75rem',
+                                                fontWeight: '500'
+                                            }}>
+                                                GPA: {edu.gpa}
+                                            </p>
+                                        )}
                                     </>
                                 )}
                             </div>
                         ))}
-                    </div>
+                    </section>
 
                     {/* Technical Skills */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Technical Skills
+                    <section style={{ marginBottom: '2rem' }}>
+                        <h2 style={{
+                            fontSize: '1.375rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem',
+                            paddingBottom: '0.75rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            gap: '0.75rem',
+                            color: "#a282ff"
+                        }}>
+                            TECHNICAL SKILLS
                             {isEditing && (
                                 <button
                                     onClick={() => addSkill("technical_skills")}
-                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
-                                    style={{ backgroundColor: "#a282ff" }}
+                                    style={{
+                                        fontSize: '0.75rem',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '0.5rem',
+                                        color: 'white',
+                                        width: 'fit-content',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        backgroundColor: "#a282ff"
+                                    }}
                                 >
                                     Add Skill
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
-                            <div className="space-y-3">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {cvData.technical_skills.map((skill, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
-                                    >
+                                    <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '0.75rem', padding: '1rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}>
                                         <input
                                             type="text"
                                             value={skill}
@@ -712,17 +861,27 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: "#a282ff" }}
+                                            style={{
+                                                flex: '1',
+                                                padding: '0.5rem 0.75rem',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.5rem',
+                                                fontSize: '1rem',
+                                                color: "#a282ff"
+                                            }}
                                         />
                                         <button
-                                            onClick={() =>
-                                                removeSkill(
-                                                    "technical_skills",
-                                                    index
-                                                )
-                                            }
-                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
+                                            onClick={() => removeSkill("technical_skills", index)}
+                                            style={{
+                                                fontSize: '0.75rem',
+                                                padding: '0.5rem 0.75rem',
+                                                backgroundColor: '#ef4444',
+                                                color: 'white',
+                                                borderRadius: '0.5rem',
+                                                width: 'fit-content',
+                                                border: 'none',
+                                                cursor: 'pointer'
+                                            }}
                                         >
                                             Remove
                                         </button>
@@ -730,48 +889,56 @@ export default function CVPreview() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-wrap gap-2 sm:gap-3">
-                                {cvData.technical_skills.map((skill, index) => (
-                                    <div
-                                        key={index}
-                                        className="px-3 sm:px-4 py-2 rounded-full text-center font-medium border text-xs sm:text-sm"
-                                        style={{
-                                            backgroundColor: "#f3f0ff",
-                                            color: "#a282ff",
-                                            borderColor: "#d8c8ff",
-                                        }}
-                                    >
-                                        {skill}
-                                    </div>
-                                ))}
+                            <div style={{
+                                color: '#374151',
+                                fontSize: '1rem',
+                                lineHeight: '1.8',
+                                paddingTop: '0.5rem',
+                            }}>
+                                {cvData.technical_skills.join("   •    ")}
                             </div>
                         )}
-                    </div>
+                    </section>
 
-                    {/* Soft Skills */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 font-bold mb-3 sm:mb-4 border-b border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Soft Skills
+                    {/* Core Competencies */}
+                    <section style={{ marginBottom: '2rem' }}>
+                        <h2 style={{
+                            fontSize: '1.375rem',
+                            fontWeight: 'bold',
+                            marginBottom: '1.5rem',
+                            paddingBottom: '0.75rem',
+                            borderBottom: '2px solid #e5e7eb',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            gap: '0.75rem',
+                            color: "#a282ff"
+                        }}>
+                            CORE COMPETENCIES
                             {isEditing && (
                                 <button
                                     onClick={() => addSkill("soft_skills")}
-                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
-                                    style={{ backgroundColor: "#a282ff" }}
+                                    style={{
+                                        fontSize: '0.75rem',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '0.5rem',
+                                        color: 'white',
+                                        width: 'fit-content',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        backgroundColor: "#a282ff"
+                                    }}
                                 >
-                                    Add Skill
+                                    Add Competency
                                 </button>
                             )}
                         </h2>
                         {isEditing ? (
-                            <div className="space-y-3">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {cvData.soft_skills.map((skill, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
-                                    >
+                                    <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '0.75rem', padding: '1rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}>
                                         <input
                                             type="text"
                                             value={skill}
@@ -782,17 +949,27 @@ export default function CVPreview() {
                                                     e.target.value
                                                 )
                                             }
-                                            className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: "#a282ff" }}
+                                            style={{
+                                                flex: '1',
+                                                padding: '0.5rem 0.75rem',
+                                                border: '1px solid #d1d5db',
+                                                borderRadius: '0.5rem',
+                                                fontSize: '1rem',
+                                                color: "#a282ff"
+                                            }}
                                         />
                                         <button
-                                            onClick={() =>
-                                                removeSkill(
-                                                    "soft_skills",
-                                                    index
-                                                )
-                                            }
-                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
+                                            onClick={() => removeSkill("soft_skills", index)}
+                                            style={{
+                                                fontSize: '0.75rem',
+                                                padding: '0.5rem 0.75rem',
+                                                backgroundColor: '#ef4444',
+                                                color: 'white',
+                                                borderRadius: '0.5rem',
+                                                width: 'fit-content',
+                                                border: 'none',
+                                                cursor: 'pointer'
+                                            }}
                                         >
                                             Remove
                                         </button>
@@ -800,93 +977,165 @@ export default function CVPreview() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-wrap gap-2 sm:gap-3">
-                                {cvData.soft_skills.map((skill, index) => (
-                                    <div
-                                        key={index}
-                                        className="px-3 sm:px-4 py-2 rounded-full text-center font-medium border text-xs sm:text-sm"
-                                        style={{
-                                            backgroundColor: "#f3f0ff",
-                                            color: "#a282ff",
-                                            borderColor: "#d8c8ff",
-                                        }}
-                                    >
-                                        {skill}
-                                    </div>
-                                ))}
+                            <div style={{
+                                color: '#374151',
+                                fontSize: '1rem',
+                                lineHeight: '1.8',
+                                paddingTop: '0.5rem'
+                            }}>
+                                {cvData.soft_skills.join("  •  ")}
                             </div>
                         )}
-                    </div>
+                    </section>
 
-                    {/* Looking For Job */}
-                    <div className="mb-6 sm:mb-8">
-                        <h2
-                            className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 border-b flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-gray-200 pb-2"
-                            style={{ color: "#a282ff" }}
-                        >
-                            Looking For Job
-                            {isEditing && (
-                                <button
-                                    onClick={() => addSkill("lookingForJob")}
-                                    className="text-xs sm:text-sm px-3 py-1 rounded text-white w-fit"
-                                    style={{ backgroundColor: "#a282ff" }}
-                                >
-                                    Add looking for job
-                                </button>
-                            )}
-                        </h2>
-                        {isEditing ? (
-                            <div className="space-y-3">
-                                {cvData.lookingForJob.map((interest, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 border border-gray-300 rounded"
-                                    >
-                                        <input
-                                            type="text"
-                                            value={interest}
-                                            onChange={(e) =>
-                                                handleArrayChange(
-                                                    "lookingForJob",
-                                                    index,
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="flex-1 px-2 py-1 border border-gray-200 rounded text-sm"
-                                            style={{ color: "#8b5cff" }}
-                                        />
-                                        <button
-                                            onClick={() =>
-                                                removeSkill(
-                                                    "lookingForJob",
-                                                    index
-                                                )
-                                            }
-                                            className="text-xs sm:text-sm px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-fit"
-                                        >
-                                            Remove
-                                        </button>
+                    {/* Additional Sections - only show if data exists */}
+                    {cvData.certifications && cvData.certifications.length > 0 && (
+                        <section style={{ marginBottom: '2rem' }}>
+                            <h2 style={{
+                                fontSize: '1.375rem',
+                                fontWeight: 'bold',
+                                marginBottom: '1.5rem',
+                                paddingBottom: '0.75rem',
+                                borderBottom: '2px solid #e5e7eb',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                color: "#a282ff"
+                            }}>
+                                CERTIFICATIONS
+                            </h2>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '0.5rem' }}>
+                                {cvData.certifications.map((cert, index) => (
+                                    <div key={index} style={{
+                                        color: '#374151',
+                                        lineHeight: '1.6',
+                                        fontSize: '1rem'
+                                    }}>
+                                        <span style={{ fontWeight: '600' }}>{cert.name}</span>
+                                        {cert.issuer && <span style={{ color: '#4b5563', fontWeight: '500' }}> - {cert.issuer}</span>}
+                                        {cert.date && <span style={{ color: '#6b7280', fontStyle: 'italic' }}> ({cert.date})</span>}
                                     </div>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="flex gap-2 sm:gap-4 flex-wrap">
-                                {cvData.lookingForJob.map((interest, index) => (
-                                    <div
-                                        key={index}
-                                        className="px-3 sm:px-4 py-2 rounded-full font-medium border text-xs sm:text-sm"
+                        </section>
+                    )}
+
+                    {/* Languages */}
+                    {cvData.languages && cvData.languages.length > 0 && (
+                        <section style={{ marginBottom: '2rem' }}>
+                            <h2 style={{
+                                fontSize: '1.375rem',
+                                fontWeight: 'bold',
+                                marginBottom: '1.5rem',
+                                paddingBottom: '0.75rem',
+                                borderBottom: '2px solid #e5e7eb',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                color: "#a282ff"
+                            }}>
+                                LANGUAGES
+                            </h2>
+                            <div style={{
+                                color: '#374151',
+                                fontSize: '1rem',
+                                lineHeight: '1.8',
+                                paddingTop: '0.5rem',
+                                marginRight: '2rem'
+                            }}>
+                                {cvData.languages.map(lang => `${lang.language} (${lang.proficiency})`).join("  •  ")}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Career Interests */}
+                    {cvData.lookingForJob && cvData.lookingForJob.length > 0 && (
+                        <section style={{ marginBottom: '2rem' }}>
+                            <h2 style={{
+                                fontSize: '1.375rem',
+                                fontWeight: 'bold',
+                                marginBottom: '1.5rem',
+                                paddingBottom: '0.75rem',
+                                borderBottom: '2px solid #e5e7eb',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                gap: '2rem',
+                                color: "#a282ff"
+                            }}>
+                                CAREER INTERESTS
+                                {isEditing && (
+                                    <button
+                                        onClick={() => addSkill("lookingForJob")}
                                         style={{
-                                            backgroundColor: "#f3f0ff",
-                                            color: "#8b5cff",
-                                            borderColor: "#d8c8ff",
+                                            fontSize: '0.75rem',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '0.5rem',
+                                            color: 'white',
+                                            width: 'fit-content',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            backgroundColor: "#a282ff"
                                         }}
                                     >
-                                        {interest}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                                        Add Interest
+                                    </button>
+                                )}
+                            </h2>
+                            {isEditing ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {cvData.lookingForJob.map((interest, index) => (
+                                        <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '1rem', padding: '1rem', border: '1px solid #d1d5db', borderRadius: '0.5rem' }}>
+                                            <input
+                                                type="text"
+                                                value={interest}
+                                                onChange={(e) =>
+                                                    handleArrayChange(
+                                                        "lookingForJob",
+                                                        index,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                style={{
+                                                    flex: '1',
+                                                    padding: '0.5rem 0.75rem',
+                                                    border: '1px solid #d1d5db',
+                                                    borderRadius: '0.5rem',
+                                                    fontSize: '1rem',
+                                                    color: "#a282ff"
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => removeSkill("lookingForJob", index)}
+                                                style={{
+                                                    fontSize: '0.75rem',
+                                                    padding: '0.5rem 0.75rem',
+                                                    backgroundColor: '#ef4444',
+                                                    color: 'white',
+                                                    borderRadius: '0.5rem',
+                                                    width: 'fit-content',
+                                                    border: 'none',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div style={{
+                                    color: '#374151',
+                                    fontSize: '1rem',
+                                    lineHeight: '1.8',
+                                    paddingTop: '0.5rem',
+                                    marginRight: '2rem'
+                                }}>
+                                    {cvData.lookingForJob.join("  •  ")}
+                                </div>
+                            )}
+                        </section>
+                    )}
                 </div>
             </div>
         </div>

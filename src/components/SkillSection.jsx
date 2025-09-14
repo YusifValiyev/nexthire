@@ -23,12 +23,12 @@ export default function SkillSection() {
                     <SkillCard
                         variant="secondary"
                         icon={GraphIcon}
-                        text="Take Skill-Based Assessments"
+                        text="Build Your Skill Map for Success"
                     />
                     <SkillCard
                         variant="secondary"
                         icon={JobIcon}
-                        text="Take Skill-Based Assessments"
+                        text="Connect with the Right Career"
                     />
                 </div>
             </Container>
