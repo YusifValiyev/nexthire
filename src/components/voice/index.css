@@ -85,6 +85,14 @@
 
 /* Add these to your index.css or component CSS file */
 
+@media screen and (max-width: 640px) {
+    .vapi-widget-wrapper > div:first-child > div:first-child {
+        max-width: 330px !important;
+        height: 400px !important;
+        font-size: 0.9rem;
+    }
+}
+
 .relative {
     position: relative !important;
 }
